@@ -25,27 +25,15 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-# Function to manually install Chromedriver
-def install_chromedriver():
-    if not os.path.exists("/usr/bin/chromedriver"):
-        st.info("Installing Chromedriver...")
-        subprocess.run("apt-get update", shell=True)
-        subprocess.run("apt-get install -y chromium-chromedriver", shell=True)
-        st.success("Chromedriver installed successfully!")
-
 # Define price-fetching functions
 def fetch_nykaa_price(url):
-    install_chromedriver()  # Ensure Chromedriver is installed
-    # Set up Chrome options
-    options = Options()
-    options.add_argument("--headless=new")  # Run in headless mode (no browser window)
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--no-sandbox")
-
-    # Initialize WebDriver
-    service = Service("/usr/bin/chromedriver")  # Set manual Chromedriver path
-    driver = webdriver.Chrome(service=service, options=options)
-
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    
+    service = Service(ChromeDriverManager().install())  # Auto-download latest driver
+    driver = webdriver.Chrome(service=service, options=chrome_options)
     try:
         driver.get(url)
         time.sleep(5)  # Allow page to load fully
@@ -221,17 +209,13 @@ def fetch_faceshop_price(url):
         return e
 
 def fetch_blinkit_price(url):
-    install_chromedriver()  # Ensure Chromedriver is installed
-    # Set up Chrome options
-    options = Options()
-    options.add_argument("--headless=new")  # Run in headless mode (no browser window)
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--no-sandbox")
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
     
-    # Initialize WebDriver
-    service = Service("/usr/bin/chromedriver")  # Set manual Chromedriver path
-    driver = webdriver.Chrome(service=service, options=options)
-
+    service = Service(ChromeDriverManager().install())  # Auto-download latest driver
+    driver = webdriver.Chrome(service=service, options=chrome_options)
     try:
         driver.get(url)
         time.sleep(5)  # Give time for JavaScript content to load
