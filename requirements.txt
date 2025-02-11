@@ -9,3 +9,4 @@ selenium
 webdriver-manager
 fake-useragent
 urllib3
+subprocess
