@@ -352,6 +352,24 @@ if page == "Home":
 
 # ---------------- MANAGE DATA PAGE ----------------
 elif page == "ManageData":
+    st.subheader("📊 View Current Data in Database")
+
+    # Function to fetch and display data
+    def fetch_data():
+        conn = sqlite3.connect("database.db")
+        df = pd.read_sql_query("SELECT * FROM products", conn)
+        conn.close()
+        return df
+
+    # Button to show data
+    if st.button("View Current Data"):
+        data = fetch_data()
+        if not data.empty:
+            st.dataframe(data)  # Display data in a table
+        else:
+            st.warning("No data available in the database.")
+
+    st.markdown("---")  # Separator
     st.subheader("➕ Add Data in Database")
 
     # Input fields for adding data
