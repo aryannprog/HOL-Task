@@ -28,15 +28,12 @@ from selenium.webdriver.support import expected_conditions as EC
 def fetch_nykaa_price(url):
     # Set Chrome options
     chrome_options = Options()
-    chrome_options.add_argument("--headless")  # Run in headless mode (remove if you need UI)
+    chrome_options.add_argument("--headless")  # Run without GUI
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.binary_location = "/usr/bin/chromium"  # Point to Chromium inside Docker
     
-    # Path to your local chromedriver.exe
-    chromedriver_path = "./chromedriver.exe"  # Adjust if it's in another folder
-    
-    # Set up Chrome WebDriver with the local chromedriver
-    service = Service(chromedriver_path)
+    service = Service("/usr/bin/chromedriver")  # Use built-in Chromedriver
     driver = webdriver.Chrome(service=service, options=chrome_options)
     try:
         driver.get(url)
@@ -215,15 +212,12 @@ def fetch_faceshop_price(url):
 def fetch_blinkit_price(url):
     # Set Chrome options
     chrome_options = Options()
-    chrome_options.add_argument("--headless")  # Run in headless mode (remove if you need UI)
+    chrome_options.add_argument("--headless")  # Run without GUI
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.binary_location = "/usr/bin/chromium"  # Point to Chromium inside Docker
     
-    # Path to your local chromedriver.exe
-    chromedriver_path = "./chromedriver.exe"  # Adjust if it's in another folder
-    
-    # Set up Chrome WebDriver with the local chromedriver
-    service = Service(chromedriver_path)
+    service = Service("/usr/bin/chromedriver")  # Use built-in Chromedriver
     driver = webdriver.Chrome(service=service, options=chrome_options)
     try:
         driver.get(url)
