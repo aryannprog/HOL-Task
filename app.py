@@ -354,13 +354,6 @@ if page == "Home":
 elif page == "ManageData":
     st.subheader("📊 View Current Data in Database")
 
-    # Function to fetch and display data
-    def fetch_data():
-        conn = sqlite3.connect("database.db")
-        df = pd.read_sql_query("SELECT * FROM products", conn)
-        conn.close()
-        return df
-
     # Button to show data
     if st.button("View Current Data"):
         data = fetch_data()
