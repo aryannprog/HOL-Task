@@ -9,3 +9,5 @@ selenium
 webdriver-manager
 fake-useragent
 urllib3
+chromium-chromedriver
+chromium-browser
