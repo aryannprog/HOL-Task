@@ -15,7 +15,6 @@ import sqlite3
 import json
 import lxml
 import html.parser
-import subprocess
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
@@ -27,12 +26,17 @@ from selenium.webdriver.support import expected_conditions as EC
 
 # Define price-fetching functions
 def fetch_nykaa_price(url):
+    # Set Chrome options
     chrome_options = Options()
-    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--headless")  # Run in headless mode (remove if you need UI)
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
     
-    service = Service(ChromeDriverManager().install())  # Auto-download latest driver
+    # Path to your local chromedriver.exe
+    chromedriver_path = "./chromedriver.exe"  # Adjust if it's in another folder
+    
+    # Set up Chrome WebDriver with the local chromedriver
+    service = Service(chromedriver_path)
     driver = webdriver.Chrome(service=service, options=chrome_options)
     try:
         driver.get(url)
@@ -209,12 +213,17 @@ def fetch_faceshop_price(url):
         return e
 
 def fetch_blinkit_price(url):
+    # Set Chrome options
     chrome_options = Options()
-    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--headless")  # Run in headless mode (remove if you need UI)
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
     
-    service = Service(ChromeDriverManager().install())  # Auto-download latest driver
+    # Path to your local chromedriver.exe
+    chromedriver_path = "./chromedriver.exe"  # Adjust if it's in another folder
+    
+    # Set up Chrome WebDriver with the local chromedriver
+    service = Service(chromedriver_path)
     driver = webdriver.Chrome(service=service, options=chrome_options)
     try:
         driver.get(url)
