@@ -9,4 +9,3 @@ selenium
 webdriver-manager
 fake-useragent
 urllib3
-chromedriver-autoinstaller
