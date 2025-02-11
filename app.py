@@ -27,13 +27,12 @@ from selenium.webdriver.support import expected_conditions as EC
 # Define price-fetching functions
 def fetch_nykaa_price(url):
     chrome_options = Options()
-    chrome_options.add_argument("--headless")  # Run in headless mode
-    chrome_options.add_argument("--no-sandbox")  # Required for Docker
-    chrome_options.add_argument("--disable-dev-shm-usage")  # Avoid crashes
-    chrome_options.add_argument("--remote-debugging-port=9222")  # Allow debugging
+    chrome_options.add_argument("--headless")  # Run without GUI
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.binary_location = "/usr/bin/chromium"  # Point to Chromium inside Docker
     
-    # Use the chromedriver inside Docker
-    service = Service("/usr/bin/chromedriver")
+    service = Service("/usr/bin/chromedriver")  # Use built-in Chromedriver
     driver = webdriver.Chrome(service=service, options=chrome_options)
     
     try:
@@ -212,13 +211,12 @@ def fetch_faceshop_price(url):
 
 def fetch_blinkit_price(url):
     chrome_options = Options()
-    chrome_options.add_argument("--headless")  # Run in headless mode
-    chrome_options.add_argument("--no-sandbox")  # Required for Docker
-    chrome_options.add_argument("--disable-dev-shm-usage")  # Avoid crashes
-    chrome_options.add_argument("--remote-debugging-port=9222")  # Allow debugging
+    chrome_options.add_argument("--headless")  # Run without GUI
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.binary_location = "/usr/bin/chromium"  # Point to Chromium inside Docker
     
-    # Use the chromedriver inside Docker
-    service = Service("/usr/bin/chromedriver")
+    service = Service("/usr/bin/chromedriver")  # Use built-in Chromedriver
     driver = webdriver.Chrome(service=service, options=chrome_options)
     
     try:
