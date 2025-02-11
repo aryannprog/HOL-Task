@@ -26,17 +26,15 @@ from selenium.webdriver.support import expected_conditions as EC
 
 # Define price-fetching functions
 def fetch_nykaa_price(url):
-    # Set up Chrome options
-    options = Options()
-    options.add_argument("--headless=new")  # Run in headless mode (no browser window)
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--window-size=1920x1080")  # Set a realistic screen size
-    options.add_argument("--disable-gpu")
-    options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36")  # Spoof user-agent
-
-    # Initialize WebDriver
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")  # Run in headless mode
+    chrome_options.add_argument("--no-sandbox")  # Required for Docker
+    chrome_options.add_argument("--disable-dev-shm-usage")  # Avoid crashes
+    chrome_options.add_argument("--remote-debugging-port=9222")  # Allow debugging
+    
+    # Use the chromedriver inside Docker
+    service = Service("/usr/bin/chromedriver")
+    driver = webdriver.Chrome(service=service, options=chrome_options)
     
     try:
         driver.get(url)
@@ -213,17 +211,15 @@ def fetch_faceshop_price(url):
         return e
 
 def fetch_blinkit_price(url):
-    # Set up Chrome options
-    options = Options()
-    options.add_argument("--headless=new")  # Enable headless mode (No GUI)
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--window-size=1920x1080")  # Set realistic screen size
-    options.add_argument("--disable-gpu")
-    options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36")  # Spoof user-agent
-
-    # Initialize WebDriver
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")  # Run in headless mode
+    chrome_options.add_argument("--no-sandbox")  # Required for Docker
+    chrome_options.add_argument("--disable-dev-shm-usage")  # Avoid crashes
+    chrome_options.add_argument("--remote-debugging-port=9222")  # Allow debugging
+    
+    # Use the chromedriver inside Docker
+    service = Service("/usr/bin/chromedriver")
+    driver = webdriver.Chrome(service=service, options=chrome_options)
     
     try:
         driver.get(url)
