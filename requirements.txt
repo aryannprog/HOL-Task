@@ -1,0 +1,11 @@
+streamlit
+pandas
+altair
+requests
+beautifulsoup4
+lxml
+html5lib
+selenium
+webdriver-manager
+fake-useragent
+urllib3
