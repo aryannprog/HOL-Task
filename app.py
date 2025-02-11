@@ -23,9 +23,12 @@ from selenium.common.exceptions import NoSuchWindowException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import chromedriver_autoinstaller
 
 # Define price-fetching functions
 def fetch_nykaa_price(url):
+    # Ensure latest Chromedriver is installed
+    chromedriver_autoinstaller.install()
     # Set up Chrome options
     options = Options()
     options.add_argument("--headless=new")  # Run in headless mode (no browser window)
@@ -213,6 +216,8 @@ def fetch_faceshop_price(url):
         return e
 
 def fetch_blinkit_price(url):
+    # Ensure latest Chromedriver is installed
+    chromedriver_autoinstaller.install()
     # Set up Chrome options
     options = Options()
     options.add_argument("--headless=new")  # Enable headless mode (No GUI)
