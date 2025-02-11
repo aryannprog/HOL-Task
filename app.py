@@ -36,8 +36,7 @@ def fetch_nykaa_price(url):
     options.add_argument("--no-sandbox")
     options.add_argument("--window-size=1920x1080")  # Set a realistic screen size
     options.add_argument("--disable-gpu")
-    options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36")  # Spoof user-agent
-
+    
     # Initialize WebDriver
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
@@ -225,8 +224,7 @@ def fetch_blinkit_price(url):
     options.add_argument("--no-sandbox")
     options.add_argument("--window-size=1920x1080")  # Set realistic screen size
     options.add_argument("--disable-gpu")
-    options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36")  # Spoof user-agent
-
+    
     # Initialize WebDriver
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
