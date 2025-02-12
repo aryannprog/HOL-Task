@@ -1,21 +1,21 @@
-FROM python:3.9
+# Use official Python image
+FROM python:3.10-slim
 
-# Install required packages
+# Install dependencies
 RUN apt-get update && apt-get install -y \
-    chromium-driver \
-    google-chrome-stable \
-    unzip
+    chromium chromium-driver
 
-# Set environment variables
-ENV DISPLAY=:99
+# Set environment variables for Selenium
+ENV CHROME_BIN=/usr/bin/chromium
+ENV CHROMEDRIVER_BIN=/usr/bin/chromedriver
 
 # Install Python dependencies
-COPY requirements.txt .
+COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy your app
+# Copy project files
 COPY . /app
 WORKDIR /app
 
-# Run the Streamlit app
+# Set up Streamlit to run
 CMD ["streamlit", "run", "app.py"]
