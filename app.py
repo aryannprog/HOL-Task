@@ -68,7 +68,8 @@ def fetch_amazon_price(url):
         response = session.get(url)
         response.html.render(sleep=random.uniform(2, 5))  # Render JavaScript
         
-        soup = BeautifulSoup(response.html.html, "lxml")
+        # Use 'html.parser' instead of 'lxml' if lxml issues persist
+        soup = BeautifulSoup(response.html.html, "html.parser")
 
         # Check if CAPTCHA appears
         if "captcha" in soup.text.lower():
@@ -105,7 +106,7 @@ def fetch_amazon_price(url):
 
     except Exception as e:
         print(f"Error fetching Amazon price: {e}")
-        return "NA"     
+        return "NA"
     
 def fetch_flipkart_price(url):
     HEADERS = {
