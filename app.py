@@ -39,7 +39,7 @@ def fetch_nykaa_price(url):
     
     try:
         driver.get(url)
-        time.sleep(10)  # Allow page to load fully
+        time.sleep(20)  # Allow page to load fully
 
         # Try to extract the price using class name
         try:
@@ -225,7 +225,7 @@ def fetch_blinkit_price(url):
     
     try:
         driver.get(url)
-        time.sleep(10)  # Give time for JavaScript content to load
+        time.sleep(20)  # Give time for JavaScript content to load
 
         # Get the full page source
         page_source = driver.page_source
