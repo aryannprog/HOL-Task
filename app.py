@@ -73,11 +73,8 @@ def fetch_amazon_price(url):
     driver = webdriver.Chrome(service=service, options=chrome_options)
 
     try:
-        driver.get(url)
-        
-        # Randomized sleep to avoid bot detection
-        time.sleep(random.uniform(3, 6))  
-
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        time.sleep(20)
         # Check for CAPTCHA
         if "Enter the characters" in driver.page_source:
             print("Captcha detected. Unable to fetch price.")
