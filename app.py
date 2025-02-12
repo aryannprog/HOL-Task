@@ -27,17 +27,19 @@ from selenium.webdriver.support import expected_conditions as EC
 # Define price-fetching functions
 def fetch_nykaa_price(url):
     chrome_options = Options()
-    chrome_options.add_argument("--headless")  # Run without GUI
+    chrome_options.add_argument("--headless=new")  # Use new headless mode
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
-    chrome_options.binary_location = "/usr/bin/chromium"  # Point to Chromium inside Docker
+    chrome_options.add_argument("--disable-blink-features=AutomationControlled")  # Avoid bot detection
+    chrome_options.add_argument("--remote-debugging-port=9222")  # Debugging support
+    chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
     
     service = Service("/usr/bin/chromedriver")  # Use built-in Chromedriver
     driver = webdriver.Chrome(service=service, options=chrome_options)
     
     try:
         driver.get(url)
-        time.sleep(5)  # Allow page to load fully
+        time.sleep(10)  # Allow page to load fully
 
         # Try to extract the price using class name
         try:
@@ -211,17 +213,19 @@ def fetch_faceshop_price(url):
 
 def fetch_blinkit_price(url):
     chrome_options = Options()
-    chrome_options.add_argument("--headless")  # Run without GUI
+    chrome_options.add_argument("--headless=new")  # Use new headless mode
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
-    chrome_options.binary_location = "/usr/bin/chromium"  # Point to Chromium inside Docker
+    chrome_options.add_argument("--disable-blink-features=AutomationControlled")  # Avoid bot detection
+    chrome_options.add_argument("--remote-debugging-port=9222")  # Debugging support
+    chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
     
     service = Service("/usr/bin/chromedriver")  # Use built-in Chromedriver
     driver = webdriver.Chrome(service=service, options=chrome_options)
     
     try:
         driver.get(url)
-        time.sleep(5)  # Give time for JavaScript content to load
+        time.sleep(10)  # Give time for JavaScript content to load
 
         # Get the full page source
         page_source = driver.page_source
