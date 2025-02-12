@@ -13,9 +13,8 @@ import io
 import time
 import sqlite3
 import json
-import lxml
 import html.parser
-from requests_html import HTMLSession
+import lxml
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
@@ -62,16 +61,17 @@ def fetch_nykaa_price(url):
     return price
 
 def fetch_amazon_price(url):
-    session = HTMLSession()
-    
+    HEADERS = {
+        'User-Agent': UserAgent().random,
+        'Accept-Language': 'en-US, en;q=0.5'
+    }
     try:
-        response = session.get(url)
-        response.html.render(sleep=random.uniform(2, 5))  # Render JavaScript
-        
-        # Use 'html.parser' instead of 'lxml' if lxml issues persist
-        soup = BeautifulSoup(response.html.html, "html.parser")
+        response = requests.get(url, headers=HEADERS)
+        if response.status_code != 200:
+            print(f"Failed to fetch URL: {url} (Status Code: {response.status_code})")
+            return "NA"
 
-        # Check if CAPTCHA appears
+        soup = BeautifulSoup(response.content, "lxml")
         if "captcha" in soup.text.lower():
             print("Captcha detected. Unable to fetch price.")
             return "NA"
@@ -82,7 +82,7 @@ def fetch_amazon_price(url):
         price_selectors = [
             ("span", {'id': 'priceblock_ourprice'}),
             ("span", {'id': 'priceblock_dealprice'}),
-            ("span", {'class': 'a-price-whole'}),  
+            ("span", {'class': 'a-price-whole'}),  # Whole price
             ("span", {'id': 'price-whole'})
         ]
 
@@ -106,8 +106,8 @@ def fetch_amazon_price(url):
 
     except Exception as e:
         print(f"Error fetching Amazon price: {e}")
-        return "NA"
-    
+        return "NA"                                                 
+        
 def fetch_flipkart_price(url):
     HEADERS = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
