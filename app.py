@@ -74,7 +74,7 @@ def fetch_amazon_price(url):
 
     try:
         driver.get(url)
-        time.sleep(10)  # Wait for the page to load
+        time.sleep(20)  # Wait for the page to load
 
         # Check for CAPTCHA
         if "Enter the characters" in driver.page_source:
