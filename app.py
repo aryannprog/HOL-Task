@@ -62,19 +62,17 @@ def fetch_nykaa_price(url):
 
 def fetch_amazon_price(url):
     chrome_options = Options()
-    chrome_options.add_argument("--headless=new")  # Use new headless mode
+    chrome_options.add_argument("--headless")  # Run in headless mode
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
-    chrome_options.add_argument("--disable-blink-features=AutomationControlled")  # Avoid bot detection
-    chrome_options.add_argument("--remote-debugging-port=9222")  # Debugging support
-    chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
 
-    service = Service("/usr/bin/chromedriver")  # Use built-in Chromedriver
+    service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=chrome_options)
 
     try:
-        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        time.sleep(20)
+        driver.get(url)
+        time.sleep(2)  # Wait for the page to load
+
         # Check for CAPTCHA
         if "Enter the characters" in driver.page_source:
             print("Captcha detected. Unable to fetch price.")
@@ -83,23 +81,31 @@ def fetch_amazon_price(url):
 
         price = None  # Initialize price variable
 
-        # Explicit wait for price elements
+        # Try different price elements
         price_selectors = [
             (By.ID, "priceblock_ourprice"),
             (By.ID, "priceblock_dealprice"),
             (By.CLASS_NAME, "a-price-whole"),
-            (By.ID, "price-whole"),
-            (By.CSS_SELECTOR, "span.a-price span.a-offscreen")
+            (By.ID, "price-whole")
         ]
 
         for by, value in price_selectors:
             try:
-                element = WebDriverWait(driver, 10).until(EC.presence_of_element_located((by, value)))
+                element = driver.find_element(by, value)
                 if element:
                     price = element.text.strip().replace(",", "").replace("₹", "")
                     break
             except:
                 continue
+
+        # If still no price found, try alternative CSS selector
+        if not price:
+            try:
+                element = driver.find_element(By.CSS_SELECTOR, "span.a-price span.a-offscreen")
+                if element:
+                    price = element.text.strip().replace(",", "").replace("₹", "")
+            except:
+                pass
 
         # Remove trailing dot if present
         if price and price.endswith('.'):
