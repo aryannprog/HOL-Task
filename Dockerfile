@@ -1,6 +1,15 @@
 # Use official Python image
 FROM python:3.10-slim
 
+RUN apt-get update && apt-get install -y \
+    chromium-driver \
+    google-chrome-stable \
+    fonts-liberation \
+    libappindicator3-1 \
+    libnspr4 \
+    libnss3 \
+    xdg-utils
+
 # Install dependencies
 RUN apt-get update && apt-get install -y \
     chromium chromium-driver
