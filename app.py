@@ -62,11 +62,14 @@ def fetch_nykaa_price(url):
 
 def fetch_amazon_price(url):
     chrome_options = Options()
-    chrome_options.add_argument("--headless")  # Run in headless mode
+    chrome_options.add_argument("--headless=new")  # Use new headless mode
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
-
-    service = Service(ChromeDriverManager().install())
+    chrome_options.add_argument("--disable-blink-features=AutomationControlled")  # Avoid bot detection
+    chrome_options.add_argument("--remote-debugging-port=9222")  # Debugging support
+    chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
+    
+    service = Service("/usr/bin/chromedriver")  # Use built-in Chromedriver
     driver = webdriver.Chrome(service=service, options=chrome_options)
 
     try:
