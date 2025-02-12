@@ -15,6 +15,7 @@ import sqlite3
 import json
 import lxml
 import html.parser
+from requests_html import HTMLSession
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
@@ -61,62 +62,50 @@ def fetch_nykaa_price(url):
     return price
 
 def fetch_amazon_price(url):
-    chrome_options = Options()
-    chrome_options.add_argument("--no-sandbox")
-    chrome_options.add_argument("--disable-dev-shm-usage")
-
-    service = Service(ChromeDriverManager().install())
-    driver = webdriver.Chrome(service=service, options=chrome_options)
-
+    session = HTMLSession()
+    
     try:
-        driver.get(url)
-        time.sleep(2)  # Wait for the page to load
+        response = session.get(url)
+        response.html.render(sleep=random.uniform(2, 5))  # Render JavaScript
+        
+        soup = BeautifulSoup(response.html.html, "lxml")
 
-        # Check for CAPTCHA
-        if "Enter the characters" in driver.page_source:
+        # Check if CAPTCHA appears
+        if "captcha" in soup.text.lower():
             print("Captcha detected. Unable to fetch price.")
-            driver.quit()
             return "NA"
 
         price = None  # Initialize price variable
 
         # Try different price elements
         price_selectors = [
-            (By.ID, "priceblock_ourprice"),
-            (By.ID, "priceblock_dealprice"),
-            (By.CLASS_NAME, "a-price-whole"),
-            (By.ID, "price-whole")
+            ("span", {'id': 'priceblock_ourprice'}),
+            ("span", {'id': 'priceblock_dealprice'}),
+            ("span", {'class': 'a-price-whole'}),  
+            ("span", {'id': 'price-whole'})
         ]
 
-        for by, value in price_selectors:
-            try:
-                element = driver.find_element(by, value)
-                if element:
-                    price = element.text.strip().replace(",", "").replace("₹", "")
-                    break
-            except:
-                continue
+        for tag, attrs in price_selectors:
+            element = soup.find(tag, attrs=attrs)
+            if element:
+                price = element.get_text(strip=True).replace(',', '').replace('₹', '')
+                break
 
-        # If still no price found, try alternative CSS selector
+        # If still no price found, try CSS selector
         if not price:
-            try:
-                element = driver.find_element(By.CSS_SELECTOR, "span.a-price span.a-offscreen")
-                if element:
-                    price = element.text.strip().replace(",", "").replace("₹", "")
-            except:
-                pass
+            element = soup.select_one("span.a-price span.a-offscreen")
+            if element:
+                price = element.get_text(strip=True).replace(',', '').replace('₹', '')
 
         # Remove trailing dot if present
         if price and price.endswith('.'):
             price = price[:-1]
 
-        driver.quit()
         return price if price else "NA"
 
     except Exception as e:
         print(f"Error fetching Amazon price: {e}")
-        driver.quit()
-        return "NA"
+        return "NA"     
     
 def fetch_flipkart_price(url):
     HEADERS = {
