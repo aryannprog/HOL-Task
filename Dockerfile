@@ -1,42 +1,21 @@
-# Use Python base image
-FROM python:3.9-slim
+# Use official Python image
+FROM python:3.10-slim
 
-# Install necessary system dependencies
+# Install dependencies
 RUN apt-get update && apt-get install -y \
-    wget \
-    curl \
-    unzip \
-    ca-certificates \
-    fonts-liberation \
-    libappindicator3-1 \
-    libnspr4 \
-    libnss3 \
-    xdg-utils 
+    chromium chromium-driver
 
-# Add Google Chrome repository securely
-RUN mkdir -p /etc/apt/keyrings && \
-    wget -q -O /etc/apt/keyrings/google-chrome-keyring.gpg https://dl.google.com/linux/linux_signing_key.pub && \
-    echo "deb [signed-by=/etc/apt/keyrings/google-chrome-keyring.gpg] http://dl.google.com/linux/chrome/deb/ stable main" | tee /etc/apt/sources.list.d/google-chrome.list > /dev/null
-
-# Install Google Chrome & ChromeDriver
-RUN apt-get update && apt-get install -y google-chrome-stable && \
-    rm -rf /var/lib/apt/lists/*
-
-# Install ChromeDriver manually
-RUN wget -O /tmp/chromedriver.zip https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip && \
-    unzip /tmp/chromedriver.zip -d /usr/local/bin/ && \
-    chmod +x /usr/local/bin/chromedriver && \
-    rm /tmp/chromedriver.zip
-
-# Set environment variable for ChromeDriver
-ENV PATH="/usr/local/bin:${PATH}"
+# Set environment variables for Selenium
+ENV CHROME_BIN=/usr/bin/chromium
+ENV CHROMEDRIVER_BIN=/usr/bin/chromedriver
 
 # Install Python dependencies
-COPY requirements.txt .
+COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application files
-COPY . .
+# Copy project files
+COPY . /app
+WORKDIR /app
 
-# Command to run your application
-CMD ["python", "app.py"]
+# Set up Streamlit to run
+CMD ["streamlit", "run", "app.py"]
