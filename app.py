@@ -62,7 +62,6 @@ def fetch_nykaa_price(url):
 
 def fetch_amazon_price(url):
     chrome_options = Options()
-    chrome_options.add_argument("--headless")  # Run in headless mode
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
 
