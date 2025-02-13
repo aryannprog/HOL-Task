@@ -3,6 +3,7 @@ import pandas as pd
 from concurrent.futures import ThreadPoolExecutor
 import altair as alt
 from datetime import datetime
+from urllib.parse import urlparse
 import re
 import io
 import time
