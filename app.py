@@ -72,53 +72,23 @@ def fetch_amazon_price(url):
 
     try:
         driver.get(url)
-        time.sleep(20)  # Wait for the page to load
 
-        # Check for CAPTCHA
-        if "Enter the characters" in driver.page_source:
-            print("Captcha detected. Unable to fetch price.")
-            driver.quit()
-            return "NA"
+        # Wait for the price element to be visible
+        price_element = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "a-price-whole"))
+        )
 
-        price = None  # Initialize price variable
+        # Extract and clean the price
+        price = price_element.text.strip().replace(',', '')
 
-        # Try different price elements
-        price_selectors = [
-            (By.ID, "priceblock_ourprice"),
-            (By.ID, "priceblock_dealprice"),
-            (By.CLASS_NAME, "a-price-whole"),
-            (By.ID, "price-whole")
-        ]
-
-        for by, value in price_selectors:
-            try:
-                element = driver.find_element(by, value)
-                if element:
-                    price = element.text.strip().replace(",", "").replace("₹", "")
-                    break
-            except:
-                continue
-
-        # If still no price found, try alternative CSS selector
-        if not price:
-            try:
-                element = driver.find_element(By.CSS_SELECTOR, "span.a-price span.a-offscreen")
-                if element:
-                    price = element.text.strip().replace(",", "").replace("₹", "")
-            except:
-                pass
-
-        # Remove trailing dot if present
-        if price and price.endswith('.'):
-            price = price[:-1]
-
-        driver.quit()
         return price if price else "NA"
 
     except Exception as e:
         print(f"Error fetching Amazon price: {e}")
-        driver.quit()
         return "NA"
+
+    finally:
+        driver.quit()  # Close browser session
                 
 def fetch_flipkart_price(url):
     chrome_options = Options()
