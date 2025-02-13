@@ -297,12 +297,11 @@ def identify_sales_channel(url):
 
 def fetch_price(channel, url):
     log=[]
-    if channel == 'Amazon':
-        return fetch_amazon_price(url)
+    # if channel == 'Amazon':
+    #    return fetch_amazon_price(url)
     # elif channel == 'Nykaa':
     #    return fetch_nykaa_price(url)
-    elif channel == 'Flipkart':
-        time.sleep(3)
+    if channel == 'Flipkart':
         return fetch_flipkart_price(url)
     elif channel == 'Myntra':
         return fetch_myntra_price(url)
