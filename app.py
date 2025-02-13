@@ -304,10 +304,10 @@ def fetch_data():
     df = pd.read_sql_query("SELECT * FROM products", conn)
     conn.close()
 
-    # Ensure SKU_CODE is displayed without commas
+    # Convert SKU_CODE to a string to prevent automatic comma formatting
     if "SKU_CODE" in df.columns:
-        df["SKU_CODE"] = df["SKU_CODE"].astype(int)  # Convert to integer (removes commas)
-    
+        df["SKU_CODE"] = df["SKU_CODE"].astype(str)  
+
     return df
 
 # Function to add a row to the database
@@ -361,12 +361,12 @@ if page == "Home":
 
 # ---------------- MANAGE DATA PAGE ----------------
 elif page == "ManageData":
-    # Display data without button click
+    # Display data directly without a button
     st.subheader("📊 Current Data")
     
     data = fetch_data()
     if not data.empty:
-        st.dataframe(data)  # Display data without commas in SKU_CODE
+        st.dataframe(data.style.format({"SKU_CODE": "{}"}))  # Ensures no commas
     else:
         st.warning("No data available in the database.")
         st.markdown("---")  # Separator
