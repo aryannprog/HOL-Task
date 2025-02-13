@@ -357,22 +357,26 @@ if page == "Home":
 # ---------------- MANAGE DATA PAGE ----------------
 elif page == "ManageData":
     st.subheader("📊 Current Data")
-
     # Function to fetch and display data
     def fetch_data():
         conn = sqlite3.connect("dataset.db")
         df = pd.read_sql_query("SELECT * FROM products", conn)
         conn.close()
+        
+        # Ensure SKU_CODE is displayed without commas
+        if 'SKU_CODE' in df.columns:
+            df['SKU_CODE'] = df['SKU_CODE'].astype(int)  # Convert to integer type
+    
         return df
-
+    
     # Fetch and display data automatically
     data = fetch_data()
     if not data.empty:
         st.dataframe(data)  # Display data in a table
     else:
         st.warning("No data available in the database.")
-    st.markdown("---")  # Separator
-    
+        st.markdown("---")  # Separator
+        
     st.subheader("➕ Add Data in Database")
 
     # Input fields for adding data
