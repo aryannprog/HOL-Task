@@ -287,8 +287,8 @@ def fetch_price(channel, url):
     log=[]
     if channel == 'Amazon':
         return fetch_amazon_price(url)
-    elif channel == 'Nykaa':
-        return fetch_nykaa_price(url)
+    # elif channel == 'Nykaa':
+    #    return fetch_nykaa_price(url)
     elif channel == 'Flipkart':
         time.sleep(3)
         return fetch_flipkart_price(url)
@@ -296,10 +296,10 @@ def fetch_price(channel, url):
         return fetch_myntra_price(url)
     elif channel == 'Zepto':
         return fetch_zepto_price(url)
-    elif channel == 'Faceshop':
-        return fetch_faceshop_price(url)
-    elif channel == 'Blinkit':
-        return fetch_blinkit_price(url)
+    # elif channel == 'Faceshop':
+    #    return fetch_faceshop_price(url)
+    # elif channel == 'Blinkit':
+    #    return fetch_blinkit_price(url)
     else:
         return "NA"
     
