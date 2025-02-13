@@ -298,11 +298,16 @@ def fetch_price_parallel(row):
     
 DB_FILE = "dataset.db"
 
-# Function to fetch data from SQLite
+# Function to fetch and format data
 def fetch_data():
-    conn = sqlite3.connect("dataset.db")  # Ensure correct path
+    conn = sqlite3.connect("dataset.db")
     df = pd.read_sql_query("SELECT * FROM products", conn)
     conn.close()
+
+    # Ensure SKU_CODE is displayed without commas
+    if "SKU_CODE" in df.columns:
+        df["SKU_CODE"] = df["SKU_CODE"].astype(int)  # Convert to integer (removes commas)
+    
     return df
 
 # Function to add a row to the database
@@ -356,27 +361,16 @@ if page == "Home":
 
 # ---------------- MANAGE DATA PAGE ----------------
 elif page == "ManageData":
+    # Display data without button click
     st.subheader("📊 Current Data")
-    # Function to fetch and display data
-    def fetch_data():
-        conn = sqlite3.connect("dataset.db")
-        df = pd.read_sql_query("SELECT * FROM products", conn)
-        conn.close()
-        
-        # Ensure SKU_CODE is displayed without commas
-        if 'SKU_CODE' in df.columns:
-            df['SKU_CODE'] = df['SKU_CODE'].astype(int)  # Convert to integer type
     
-        return df
-    
-    # Fetch and display data automatically
     data = fetch_data()
     if not data.empty:
-        st.dataframe(data)  # Display data in a table
+        st.dataframe(data)  # Display data without commas in SKU_CODE
     else:
         st.warning("No data available in the database.")
         st.markdown("---")  # Separator
-        
+
     st.subheader("➕ Add Data in Database")
 
     # Input fields for adding data
