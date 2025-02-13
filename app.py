@@ -121,34 +121,46 @@ def fetch_amazon_price(url):
         return "NA"
                 
 def fetch_flipkart_price(url):
-    HEADERS = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        'Accept-Language': 'en-US, en;q=0.5'
-    }
+    # Set up Selenium WebDriver
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")  # Run in headless mode
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+
+    service = Service("chromedriver.exe")  # Adjust if needed
+    driver = webdriver.Chrome(service=service, options=chrome_options)
 
     try:
-        response = requests.get(url, headers=HEADERS)
-        if response.status_code != 200:
-            print(f"Failed to fetch URL: {url} (Status Code: {response.status_code})")
-            return "NA"
-
-        soup = BeautifulSoup(response.content, 'html.parser')
+        driver.get(url)
+        
+        # Wait for the price element to load
         try:
-            price = soup.find("div", class_="Nx9bqj CxhGGd").get_text().strip().replace('₹', '').replace(',', '')
-        except AttributeError:
+            price_element = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.CLASS_NAME, "Nx9bqj.CxhGGd"))
+            )
+        except:
             try:
-                price = soup.find("div", class_="_30jeq3 _16Jk6d").get_text().strip().replace('₹', '').replace(',', '')
-            except AttributeError:
+                price_element = WebDriverWait(driver, 10).until(
+                    EC.presence_of_element_located((By.CLASS_NAME, "_30jeq3._16Jk6d"))
+                )
+            except:
                 try:
-                    price = soup.select_one("._25b18c ._30jeq3").get_text().strip().replace('₹', '').replace(',', '')
-                except AttributeError:
-                    price = "NA"
+                    price_element = WebDriverWait(driver, 10).until(
+                        EC.presence_of_element_located((By.CSS_SELECTOR, "._25b18c ._30jeq3"))
+                    )
+                except:
+                    return "NA"
+        
+        price = price_element.text.strip().replace('₹', '').replace(',', '')
 
         return price
 
-    except requests.exceptions.RequestException as e:
-        print(f"Request error for URL {url}: {e}")
-        return e
+    except Exception as e:
+        print(f"Error: {e}")
+        return "NA"
+
+    finally:
+        driver.quit()  # Close browser instance
 
 def fetch_myntra_price(url):
     HEADERS = {
