@@ -416,14 +416,16 @@ elif page == "ManageData":
     # Delete Row Section
     st.subheader("❌ Delete Data from Database")
     delete_sku_code = st.text_input("Enter SKU Code to Delete")
-
+    
     if st.button("Delete Row"):
-        if delete_sku_code:
+        if not delete_sku_code:
+            st.warning("Please enter an SKU Code to delete.")
+        elif not re.fullmatch(r"\d+", delete_sku_code):  # Ensure only digits (no commas)
+            st.error("Invalid format! Enter SKU Code without commas (e.g., 30000, not 30,000).")
+        else:
             delete_row(delete_sku_code)
             st.success(f"Row with SKU_CODE {delete_sku_code} deleted successfully!")
-        else:
-            st.warning("Please enter an SKU Code to delete.")
-
+            
 # ---------------- FETCH PRICES PAGE ----------------
 elif page == "FetchPrices":
     st.title("🔍 Fetch Prices from Dataset")
