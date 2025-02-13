@@ -1,20 +1,12 @@
 import streamlit as st
-import os
 import pandas as pd
 from concurrent.futures import ThreadPoolExecutor
 import altair as alt
 from datetime import datetime
-import requests
-from bs4 import BeautifulSoup
 import re
-from urllib.parse import urlparse
-from fake_useragent import UserAgent
 import io
 import time
 import sqlite3
-import json
-import html.parser
-import lxml
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
