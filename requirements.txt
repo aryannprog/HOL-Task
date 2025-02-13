@@ -3,3 +3,4 @@ pandas
 altair
 selenium>=4.6
 webdriver-manager
+urllib3
