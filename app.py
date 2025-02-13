@@ -34,8 +34,7 @@ def fetch_nykaa_price(url):
     chrome_options.add_argument("--remote-debugging-port=9222")  # Debugging support
     chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
     
-    service = Service("/usr/bin/chromedriver")  # Use built-in Chromedriver
-    driver = webdriver.Chrome(service=service, options=chrome_options)
+    driver = webdriver.Chrome(options=chrome_options)
     
     try:
         driver.get(url)
@@ -61,53 +60,66 @@ def fetch_nykaa_price(url):
     return price
 
 def fetch_amazon_price(url):
-    HEADERS = {
-        'User-Agent': UserAgent().random,
-        'Accept-Language': 'en-US, en;q=0.5'
-    }
-    try:
-        response = requests.get(url, headers=HEADERS)
-        if response.status_code != 200:
-            print(f"Failed to fetch URL: {url} (Status Code: {response.status_code})")
-            return "NA"
+    chrome_options = Options()
+    chrome_options.add_argument("--headless=new")  # Use new headless mode
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--disable-blink-features=AutomationControlled")  # Avoid bot detection
+    chrome_options.add_argument("--remote-debugging-port=9222")  # Debugging support
+    chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
+    
+    driver = webdriver.Chrome(options=chrome_options)
 
-        soup = BeautifulSoup(response.content, "lxml")
-        if "captcha" in soup.text.lower():
+    try:
+        driver.get(url)
+        time.sleep(20)  # Wait for the page to load
+
+        # Check for CAPTCHA
+        if "Enter the characters" in driver.page_source:
             print("Captcha detected. Unable to fetch price.")
+            driver.quit()
             return "NA"
 
         price = None  # Initialize price variable
 
         # Try different price elements
         price_selectors = [
-            ("span", {'id': 'priceblock_ourprice'}),
-            ("span", {'id': 'priceblock_dealprice'}),
-            ("span", {'class': 'a-price-whole'}),  # Whole price
-            ("span", {'id': 'price-whole'})
+            (By.ID, "priceblock_ourprice"),
+            (By.ID, "priceblock_dealprice"),
+            (By.CLASS_NAME, "a-price-whole"),
+            (By.ID, "price-whole")
         ]
 
-        for tag, attrs in price_selectors:
-            element = soup.find(tag, attrs=attrs)
-            if element:
-                price = element.get_text(strip=True).replace(',', '').replace('₹', '')
-                break
+        for by, value in price_selectors:
+            try:
+                element = driver.find_element(by, value)
+                if element:
+                    price = element.text.strip().replace(",", "").replace("₹", "")
+                    break
+            except:
+                continue
 
-        # If still no price found, try CSS selector
+        # If still no price found, try alternative CSS selector
         if not price:
-            element = soup.select_one("span.a-price span.a-offscreen")
-            if element:
-                price = element.get_text(strip=True).replace(',', '').replace('₹', '')
+            try:
+                element = driver.find_element(By.CSS_SELECTOR, "span.a-price span.a-offscreen")
+                if element:
+                    price = element.text.strip().replace(",", "").replace("₹", "")
+            except:
+                pass
 
         # Remove trailing dot if present
         if price and price.endswith('.'):
             price = price[:-1]
 
+        driver.quit()
         return price if price else "NA"
 
     except Exception as e:
         print(f"Error fetching Amazon price: {e}")
-        return "NA"                                                 
-        
+        driver.quit()
+        return "NA"
+                
 def fetch_flipkart_price(url):
     HEADERS = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
@@ -220,8 +232,7 @@ def fetch_blinkit_price(url):
     chrome_options.add_argument("--remote-debugging-port=9222")  # Debugging support
     chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
     
-    service = Service("/usr/bin/chromedriver")  # Use built-in Chromedriver
-    driver = webdriver.Chrome(service=service, options=chrome_options)
+    driver = webdriver.Chrome(options=chrome_options)
     
     try:
         driver.get(url)
