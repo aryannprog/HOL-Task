@@ -164,78 +164,98 @@ def fetch_flipkart_price(url):
         driver.quit()  # Close browser instance
 
 def fetch_myntra_price(url):
-    HEADERS = {
-        'User-Agent': 'Mozilla/5.0',
-        'Accept-Language': 'en-US, en;q=0.5'
-    }
-    try:
-        response = requests.get(url, headers=HEADERS)
-        if response.status_code != 200:
-            print(f"Failed to fetch URL: {url} (Status Code: {response.status_code})")
-            return "NA"
+    chrome_options = Options()
+    chrome_options.add_argument("--headless=new")  # Use new headless mode
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--disable-blink-features=AutomationControlled")  # Avoid bot detection
+    chrome_options.add_argument("--remote-debugging-port=9222")  # Debugging support
+    chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
+    
+    driver = webdriver.Chrome(options=chrome_options)
 
-        soup = BeautifulSoup(response.content, 'html.parser')
+    try:
+        driver.get(url)
+        
+        # Wait for the price element to load
         try:
-            script = soup.find("script", string=lambda t: t and "pdpData" in t)
-            if script:
-                json_text = script.string.strip()
-                json_start = json_text.find("{")
-                extracted_json = json_text[json_start:]
-                json_data = json.loads(extracted_json)
-                price_data = json_data.get("pdpData", {}).get("price", {})
-                return price_data.get("discounted", "NA")
-            else:
-                return "NA"
+            price_element = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.CLASS_NAME, "pdp-discount-container"))
+            )
+            price_text = price_element.text.strip().replace('₹', '').replace(',', '')
+
+            # Extract only the numeric discounted price
+            price = price_text.split()[0]  # Extracts only the first numeric value
+
+            return price
+
         except Exception as e:
             print(f"Error fetching Myntra price: {e}")
-            return e
-    except Exception as e:
-        print(f"Error fetching Myntra price: {e}")
-        return e
+            return "NA"
 
+    finally:
+        driver.quit()  # Close browser instance
+        
 def fetch_zepto_price(url):
-    HEADERS = {
-        'User-Agent': 'Mozilla/5.0',
-        'Accept-Language': 'en-US, en;q=0.5'
-    }
-    try:
-        response = requests.get(url, headers=HEADERS)
-        if response.status_code != 200:
-            print(f"Failed to fetch URL: {url} (Status Code: {response.status_code})")
-            return e
+    chrome_options = Options()
+    chrome_options.add_argument("--headless=new")  # Use new headless mode
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--disable-blink-features=AutomationControlled")  # Avoid bot detection
+    chrome_options.add_argument("--remote-debugging-port=9222")  # Debugging support
+    chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
+    
+    driver = webdriver.Chrome(options=chrome_options)
 
-        soup = BeautifulSoup(response.content, 'html.parser')
+    try:
+        driver.get(url)
+
+        # Wait for price element to be visible
         try:
-            price_element = soup.find("span", itemprop="price")
-            return price_element['content'] if price_element else "NA"
-        except AttributeError:
-            return e
-    except Exception as e:
-        print(f"Error fetching Zepto price: {e}")
-        return e
+            price_element = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, "span[itemprop='price']"))
+            )
+            price = price_element.get_attribute("content")  # Extracts price
+
+            return price if price else "NA"
+
+        except Exception as e:
+            print(f"Error fetching Zepto price: {e}")
+            return "NA"
+
+    finally:
+        driver.quit()  # Close browser session
 
 def fetch_faceshop_price(url):
-    HEADERS = {
-        'User-Agent': 'Mozilla/5.0',
-        'Accept-Language': 'en-US, en;q=0.5'
-    }
+    chrome_options = Options()
+    chrome_options.add_argument("--headless=new")  # Use new headless mode
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--disable-blink-features=AutomationControlled")  # Avoid bot detection
+    chrome_options.add_argument("--remote-debugging-port=9222")  # Debugging support
+    chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
+    
+    driver = webdriver.Chrome(options=chrome_options)
+
     try:
-        response = requests.get(url, headers=HEADERS)
-        if response.status_code != 200:
-            print(f"Failed to fetch URL: {url} (Status Code: {response.status_code})")
-            return e
+        driver.get(url)
 
-        soup = BeautifulSoup(response.content, 'html.parser')
+        # Wait for the price element to be visible
         try:
-            price = soup.find("span", class_="price-item price-item--sale").get_text().strip().replace('₹', '').replace(',', '')
-        except AttributeError:
-            price = "NA"
+            price_element = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.CLASS_NAME, "price-item--sale"))
+            )
+            price = price_element.text.strip().replace('₹', '').replace(',', '')  # Extracts price
 
-        return price
-    except Exception as e:
-        print(f"Error fetching Faceshop price: {e}")
-        return e
+            return price if price else "NA"
 
+        except Exception as e:
+            print(f"Error fetching Faceshop price: {e}")
+            return "NA"
+
+    finally:
+        driver.quit()  # Close browser session
+        
 def fetch_blinkit_price(url):
     chrome_options = Options()
     chrome_options.add_argument("--headless=new")  # Use new headless mode
@@ -298,20 +318,20 @@ def identify_sales_channel(url):
 
 def fetch_price(channel, url):
     log=[]
-    # if channel == 'Amazon':
-    #    return fetch_amazon_price(url)
-    # elif channel == 'Nykaa':
-    #    return fetch_nykaa_price(url)
-    if channel == 'Flipkart':
+    if channel == 'Amazon':
+        return fetch_amazon_price(url)
+    elif channel == 'Nykaa':
+        return fetch_nykaa_price(url)
+    elif channel == 'Flipkart':
         return fetch_flipkart_price(url)
     elif channel == 'Myntra':
         return fetch_myntra_price(url)
     elif channel == 'Zepto':
         return fetch_zepto_price(url)
-    # elif channel == 'Faceshop':
-    #    return fetch_faceshop_price(url)
-    # elif channel == 'Blinkit':
-    #    return fetch_blinkit_price(url)
+    elif channel == 'Faceshop':
+        return fetch_faceshop_price(url)
+    elif channel == 'Blinkit':
+        return fetch_blinkit_price(url)
     else:
         return "NA"
     
